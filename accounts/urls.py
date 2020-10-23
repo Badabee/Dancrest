@@ -63,7 +63,7 @@ urlpatterns = [
 	path('register', views.RegistrationView.as_view(), name='register'),
 	path('login', LoginView, name='login'),
 	path('logout', LogoutView, name='logout'),
-	path('password/reset', password_reset_view, name='password-reset'),
-	path('password/reset/confirm', password_reset_confirm_view, name='password-reset-confirm'),
-	path('password/change', password_change_view, name='password-change'),
+	path('password/reset', PasswordResetView, name='password-reset'),
+	path('password/reset/confirm', PasswordResetConfirmView, name='password-reset-confirm'),
+	path('password/change', PasswordChangeView, name='password-change'),
 ]
