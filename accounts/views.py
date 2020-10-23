@@ -1,30 +1,50 @@
 from django.contrib.auth import get_user_model
+
+UserModel = get_user_model()
+
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-UserModel = get_user_model()
-from root.settings import DEFAULT_EMAIL, MAILGUN_API_KEY
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from drf_yasg2.utils import swagger_auto_schema
 from requests_html import HTMLSession
 
+session = HTMLSession()
+
+from root.settings import DEFAULT_EMAIL, MAILGUN_API_KEY
 from .serializers import RegistrationSerializer
 from .tokens import account_activation_token
 
-session = HTMLSession()
+
+RESPONSES = {
+    200: "HTTP request successful",
+    400: "Malformed request syntax",
+    500: "An internal server error occured",
+}
 
 
 class RegistrationView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
 
+    @swagger_auto_schema(
+        request_body=RegistrationSerializer,
+        operation_description="Register users",
+        operation_summary="Registration View",
+        responses={
+            201: "Object creation successful",
+            400: "Malformed request syntax",
+            500: "An internal server error occured",
+        },
+        tags=["Authentication"],
+    )
     def post(self, request, *args, **kwargs):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -83,6 +103,12 @@ class RegistrationView(APIView):
 class AccountActivationView(APIView):
     permission_classes = (AllowAny,)
 
+    @swagger_auto_schema(
+        operation_description="Activate email of users",
+        operation_summary="Account Activation View",
+        responses=RESPONSES,
+        tags=["Authentication"],
+    )
     def get(self, request, uidb64, token):
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
