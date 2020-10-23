@@ -1,2 +1,10 @@
-django>=3.1.2
-djangorestframework>=3.12.1
+dj-database-url==0.5.0
+dj-rest-auth==1.1.2
+django==3.1.2
+djangorestframework==3.12.1
+drf-yasg2==1.19.3
+gunicorn==20.0.4
+python-dotenv==0.14.0 
+requests-html==0.10.0
+six==1.15.0
+whitenoise==5.2.0
