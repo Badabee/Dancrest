@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+
 UserModel = get_user_model()
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(format="hex", read_only=True, required=False)
